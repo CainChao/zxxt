@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context" 
+		xmlns:tx="http://www.springframework.org/schema/tx" 
+		xsi:schemaLocation="http://www.springframework.org/schema/beans   
+                        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd  
+                        http://www.springframework.org/schema/context   
+                        http://www.springframework.org/schema/context/spring-context-4.1.xsd  
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+                        ">
+
+ 	<!--<context:property-placeholder location="classpath:mysql.properties" ignore-unresolvable="true" /> -->
+	
+	<context:component-scan base-package="com.zxxt.db.mapper" />
+
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+		<property name="url" value="${mysql.url}"/>
+		<property name="username" value="${mysql.username}" />
+		<property name="password" value="${mysql.password}" />
+		<property name="filters" value="stat,log4j,wall" />
+		<property name="maxActive" value="${mysql.maxActive}" />
+		<property name="initialSize" value="${mysql.initialSize}" />
+		<property name="maxWait" value="${mysql.maxWait}" />
+		<property name="minIdle" value="${mysql.minIdle}" />
+		<property name="validationQuery" value="${mysql.validationQuery}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
+		<property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" />
+		<property name="testWhileIdle" value="${druid.testWhileIdle}" />
+		<property name="testOnBorrow" value="${druid.testOnBorrow}" />
+		<property name="testOnReturn" value="${druid.testOnReturn}" />
+		<property name="poolPreparedStatements" value="${druid.poolPreparedStatements}" />
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.maxPoolPreparedStatementPerConnectionSize}" />
+	</bean>
+<!--	<bean id="dataSource_log" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+		<property name="url" value="${mysql.log.url}"/>
+		<property name="username" value="${mysql.log.username}" />
+		<property name="password" value="${mysql.log.password}" />
+		<property name="filters" value="stat,log4j,wall" />
+		<property name="maxActive" value="${mysql.maxActive}" />
+		<property name="initialSize" value="${mysql.initialSize}" />
+		<property name="maxWait" value="${mysql.maxWait}" />
+		<property name="minIdle" value="${mysql.minIdle}" />
+		<property name="validationQuery" value="${mysql.validationQuery}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
+		<property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" />
+		<property name="testWhileIdle" value="${druid.testWhileIdle}" />
+		<property name="testOnBorrow" value="${druid.testOnBorrow}" />
+		<property name="testOnReturn" value="${druid.testOnReturn}" />
+		<property name="poolPreparedStatements" value="${druid.poolPreparedStatements}" />
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.maxPoolPreparedStatementPerConnectionSize}" />
+	</bean>-->
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath*:/mapper/**/*.xml</value>
+			</list>
+		</property>
+	</bean>
+<!--	<bean id="sqlSessionFactory_log" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource_log" />
+		<property name="configLocation" value="classpath:/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath*:/mapperLog/**/*.xml</value>
+			</list>
+		</property>
+	</bean>-->
+
+	<bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.zxxt.db.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+<!--	<bean name="mapperScannerConfigurer_log" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.xipin.zl.liner.db.daoLog" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory_log" />
+	</bean>-->
+
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+<!--	<bean id="txManager_log" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource_log" />
+	</bean>-->
+
+	<tx:annotation-driven transaction-manager="txManager" />
+<!--	<tx:annotation-driven transaction-manager="txManager_log" />-->
+
+</beans>
